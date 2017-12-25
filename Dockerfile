@@ -1,19 +1,13 @@
-FROM library/debian:jessie
-MAINTAINER Ouv27 <smo270970@hotmail.com> #Original creator of this Dockerfile
-ENV TZ=Europe/Paris
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+FROM alpine:3.6
+LABEL Maintainer="Tim de Pater <code@trafex.nl>" \
+      Description="Lightweight Mosquitto MQTT server based on Alpine Linux."
 
-ADD https://repo.mosquitto.org/debian/mosquitto-repo.gpg.key .
-RUN apt-key add mosquitto-repo.gpg.key
-ADD https://repo.mosquitto.org/debian/mosquitto-jessie.list /etc/apt/sources.list.d/
+# Install packages
+RUN apk --no-cache add mosquitto mosquitto-clients
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y mosquitto && \
-    rm -f mosquitto-repo.gpg.key
+# Expose MQTT port
+EXPOSE 1883
 
-RUN adduser --system --disabled-password --disabled-login mosquitto
+ENV PATH /usr/sbin:$PATH
 
-VOLUME ["/mqtt/data", "/mqtt/config", "/mqtt/log"]
-EXPOSE 1883 9001
-CMD ["/usr/sbin/mosquitto", "-c", "/mqtt/config/mosquitto.conf"]
+ENTRYPOINT ["/usr/sbin/mosquitto"]
