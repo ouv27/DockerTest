@@ -1,9 +1,12 @@
-FROM alpine:3.6
-LABEL Maintainer="Tim de Pater <code@trafex.nl>" \
-      Description="Lightweight Mosquitto MQTT server based on Alpine Linux."
+FROM debian:stretch
+MAINTAINER Ouv27 <smo270970@hotmail.com> #Original creator of this Dockerfile
+# To set right TimeZone
+ENV TZ=Europe/Paris
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Install packages
-RUN apk --no-cache add mosquitto mosquitto-clients
+RUN apt-get update
+RUN apt-get -y upgrade
+RUN apt-get -y install mosquitto
 
 # Expose MQTT port
 EXPOSE 1883
